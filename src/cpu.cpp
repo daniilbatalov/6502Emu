@@ -106,7 +106,7 @@ void CPU::Execute(uint64_t cycles)
         }
         default:
         {
-        #ifdef DEBUG
+        #ifdef __DEBUG__
             --cycles;
             std::cout << "Opcode is not detected: " << code << std::endl;
         #endif

@@ -22,7 +22,7 @@ Word Memory::fetch_word(Word adr)
 void Memory::write_byte(Byte val, Word adr)
 {
     data[adr] = val;
-#ifdef DEBUG
+#ifdef __DEBUG__
     std::cout << "Value at address " << std::hex << adr << " is set to " << (int)data[adr] << std::endl;
 #endif
 }
@@ -34,7 +34,7 @@ void Memory::write_word(Word val, Word adr)
     data[adr] = lsb;
     data[adr + 1] = msb;
 
-#ifdef DEBUG
+#ifdef __DEBUG__
     std::cout << "Value at address " << std::hex << adr << " is set to " << (int)data[adr] << std::endl;
     std::cout << "Value at address " << std::hex << adr + 1 << " is set to " << (int)data[adr + 1] << std::endl;
 #endif
