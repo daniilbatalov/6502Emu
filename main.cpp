@@ -15,6 +15,6 @@ int main()
     CPU c(m);
     c.Init();
     c.Execute(2);
-    std::cout << std::hex << (int) c.getAC() << std::endl;
+    std::cout << "AC is " << std::hex << (int) c.getAC() << std::endl;
     return 0;
 }

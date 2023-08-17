@@ -19,10 +19,89 @@ void CPU::Execute(uint64_t cycles)
         case op_lda_imm:
         {
             Byte val = this->m.fetch_byte(PC++);
-            --cycles;
             this->AC = val;
             (val == 0) ? this->setZFlag() : this->clearZFlag();
             (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= 1;
+            break;
+        }
+        case op_lda_zp:
+        {
+            Byte adr = this->m.fetch_byte(PC++);
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= 2;
+            break;
+        }
+        case op_lda_zpx:
+        {
+            Byte adr = (this->m.fetch_byte(PC++) + this->XR) & 0xff;
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= 3;
+            break;
+        }
+        case op_lda_ab:
+        {
+            Word adr = this->m.fetch_word(PC++);
+            ++PC;
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= 3;
+            break;
+        }
+        case op_lda_abx:
+        {
+            Byte low_addr = this->m.fetch_byte(PC);
+            Word adr = (this->m.fetch_word(PC++) + this->XR) & 0xffff;
+            ++PC;
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= ((low_addr + this->XR) & 0x100 ? 4 : 3);
+            break;
+        }
+        case op_lda_aby:
+        {
+            Byte low_addr = this->m.fetch_byte(PC);
+            Word adr = (this->m.fetch_word(PC++) + this->YR) & 0xffff;
+            ++PC;
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= ((low_addr + this->YR) & 0x100 ? 4 : 3);
+            break;
+        }
+        case op_lda_inx: //indexed-indirect x
+        {
+            Byte v = (this->m.fetch_byte(PC++) + this->XR) & 0xff;
+            Word adr = this->m.fetch_word(v);
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= 5;
+            break;
+        }
+        case op_lda_iny: //indirect-indexed y
+        {
+
+            Byte v = this->m.fetch_word(PC++);
+            Byte low_addr = this->m.fetch_byte(v);
+            Word adr = (this->m.fetch_word(v) + this->YR) & 0xffff;
+            Byte val = this->m.fetch_byte(adr);
+            this->AC = val;
+            (val == 0) ? this->setZFlag() : this->clearZFlag();
+            (val & 0x80) ? this->setNFlag() : this->clearNFlag();
+            cycles -= ((low_addr + this->YR) & 0x100 ? 5 : 4);
             break;
         }
         default:
